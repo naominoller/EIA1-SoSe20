@@ -11,7 +11,6 @@ let noise: boolean = true; // Gibt an, ob ein Ton gemacht werden soll // wahr: s
 let on: boolean = true; // läuft das Spiel
 let win: boolean; // true: Spieler hat gewonnen - false: Spieler hat nicht gewonnen
 let level: number; // Anzahl der Töne, die zu wiederholen sind
-let startPressed: number = 0; // wie oft wurde Startbutton geklickt
 let playing: boolean = false; // bevor Spiel gestartet wird passiert nichts, wenn Spieler auf Buttons klickt
 
 const turnCounter: HTMLElement = document.querySelector("#turn"); // hier wird später reingeschrieben in welchem Spielzug der Spieler ist
@@ -53,14 +52,12 @@ startButton.addEventListener('click', function() { // Wenn Spieler den Startbutt
     return;
   }
   if (on || win) { // Wenn on variable = true oder der Spieler gewonnen hat --- ansonsten passiert nichts beim Klicken auf den Startbutton
-    if(startPressed == 0){ // prüft, ob der Startbutton schon einmal benutzt wurde, ansonsten würde die Konsole einen Fehler anzeigen, da die Buttons schon weg sind
     removeElement("#levelone"); // klickt Spieler den Startbutton werden Level Button nicht mehr angezeigt
     removeElement("#leveltwo"); 
     removeElement("#levelthree"); 
     removeElement("#levelfour"); 
     removeElement("#Schwierigkeitsgrad");
-    }
-    startPressed++;
+
     play();
   }
 });
@@ -228,7 +225,7 @@ function check() { // prüft, ob der Spieler die korrekten Töne geklickt hat un
     compTurn = true; // --> Neue Reunde = PC muss Ton abspielen
     flash = 0; // Anzahl abgespielter Töne: neue Runde = noch kein Ton wurde gespielt 
     turnCounter.innerHTML = "" + turn; // turnCounter wird aktualisiert 
-    intervalId = setInterval(gameTurn, 800); // gameTurn alle 800 ms aufrufen. Das ganze in einer Variable speichern, damit man die Wiederholungen mit der clearInterval Methode stoppen kann, hier starten wir praktisch die neue rnde
+    intervalId = setInterval(gameTurn, 800); // gameTurn alle 800 ms aufrufen. Das ganze in einer Variable speichern, damit man die Wiederholungen mit der clearInterval Methode stoppen kann, hier starten wir praktisch die neue Runde
   }
 
 }
@@ -285,32 +282,38 @@ function removeElement(elementId: any) { // Level Buttons werden entfernt
 
 function addElement() {
   
-  var one = document.createElement("img") as HTMLImageElement;
-  var two = document.createElement("img") as HTMLImageElement;
-  var three = document.createElement("img") as HTMLImageElement;
-  var four = document.createElement("img") as HTMLImageElement;
-  one.id ="levelone";
-  two.id = "leveltwo";
+  
+  var node = document.createElement("p"); // erstellt neues Element p
+  var text = document.createTextNode("select your level here:"); // erstellt neuen Text 
+  var one = document.createElement("img"); // erstellt neuen Level Button 1
+  var two = document.createElement("img"); // erstellt neuen Level Button 2
+  var three = document.createElement("img"); // erstellt neuen Level Button 3
+  var four = document.createElement("img"); // erstellt neuen Level Button 4
+  node.id ="Schwierigkeitsgrad"; 
+  node.appendChild(text);
+  one.id ="levelone"; // gibt dem neuen level 1 Button die id "levelone", damit diesem über die addEventListener Methode etwas zugewiesen werden kann
+  two.id = "leveltwo"; // wir weisen der ID "level..." das HTML-Element zu, welches wir bereits erstellt haben
   three.id = "levelthree";
   four.id="levelfour";
-  one.classList.add("button");
+  one.classList.add("button"); // fügt dem neuen level 1 button die klasse "button" hinzu (CSS)
   two.classList.add("button");
   three.classList.add("button");
   four.classList.add("button");
-  one.src ="1.png";
+  one.src ="1.png"; // weißt dem neuen Level 1 Button das Image zu
   two.src="2.png";
   three.src="3.png";
   four.src="4.png";
-  document.querySelector("#levelbuttons").appendChild(one);
+  document.querySelector("#levelbuttons").appendChild(node); 
+  document.querySelector("#levelbuttons").appendChild(one); // plaziert den neuen Level 1 Button in das div, in dem die ursprünglichen Buttons auch platziert waren
   document.querySelector("#levelbuttons").appendChild(two);
   document.querySelector("#levelbuttons").appendChild(three);
   document.querySelector("#levelbuttons").appendChild(four);
-  addLevelListeners(one, two, three, four);
+  addLevelListeners(one, two, three, four); // fügt die eventListeners (ändern der level Variable) zu den neuen Buttons hinzu // Events werden registriert
 
 }
 
 function removeClass(){
-  soundButtons.forEach(element => {
-    element.classList.remove("highlight");
+  soundButtons.forEach(function (element) { // prüft jedes Element in soundButton (element = boo, laugh, duck, boing, applause)
+    element.classList.remove("highlight"); // highlight-Klasse (= Ton wurde abgespielt) wird entfernt 
   })
 }
